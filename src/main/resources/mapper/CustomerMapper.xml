@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fzb.hotel.mapper.CustomerMapper">
+    <!--查询所有-->
+    <select id="listCustomer" resultType="com.fzb.hotel.entity.Customer">
+        SELECT * FROM customer
+    </select>
+
+    <!--根据顾客身份证号获取顾客信息-->
+    <select id="getCustomerByCardNo" parameterType="String" resultType="com.fzb.hotel.entity.Customer">
+        SELECT * FROM customer WHERE card_no=#{cardNo}
+    </select>
+
+    <!--根据顾客id查询顾客-->
+    <select id="getCustomerById" parameterType="Long" resultType="com.fzb.hotel.entity.Customer">
+        SELECT * FROM customer WHERE id=#{id}
+    </select>
+
+    <!--搜索顾客-->
+    <select id="searchCustomer" parameterType="String" resultType="com.fzb.hotel.entity.Customer">
+        SELECT * FROM customer WHERE username LIKE CONCAT(CONCAT('%',#{username}),'%')
+    </select>
+
+
+    <!--添加-->
+    <insert id="addCustomer" keyProperty="id" useGeneratedKeys="true"  parameterType="com.fzb.hotel.entity.Customer">
+        INSERT INTO customer(username,gender,card_no,create_time)
+        VALUES (#{username}, #{gender}, #{cardNo},#{createTime})
+        <selectKey resultType="java.lang.Long" order="AFTER" keyProperty="id">
+            SELECT LAST_INSERT_ID() AS id
+        </selectKey>
+    </insert>
+
+
+    <!--编辑-->
+    <update id="editCustomer" parameterType="com.fzb.hotel.entity.Customer">
+        UPDATE customer
+        <set>
+            <if test="username != null">username=#{username},</if>
+            <if test="gender != null">gender=#{gender},</if>
+            <if test="cardNo != null">card_no=#{cardNo},</if>
+            <if test="createTime != null">create_time=#{createTime}</if>
+        </set>
+        WHERE  id=#{id}
+    </update>
+
+    <delete id="deleteCustomer" parameterType="Long">
+        DELETE FROM customer WHERE id=#{id}
+    </delete>
+
+    <!--查询顾客总数-->
+    <select id="getCustomerTotalNum" resultType="Integer">
+        select count(id) FROM customer
+    </select>
+</mapper>
+

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans-4.2.xsd">
+
+
+    <!-- shiro工厂bean配置 -->
+    <bean id="shiroFilter" class="org.apache.shiro.spring.web.ShiroFilterFactoryBean">
+        <!-- shiro的核心安全接口 -->
+        <property name="securityManager" ref="securityManager"/>
+        <!-- 要求登录时的连接 -->
+        <property name="loginUrl" value="/login"/>
+        <property name="unauthorizedUrl" value="/unauthorized"/>
+        <!-- shiro连接约束配置 -->
+        <property name="filterChainDefinitions">
+            <value>
+                <!-- 对静态资源设置允许匿名访问 -->
+                /resources/** = anon
+                <!-- 可匿名访问路径，例如：验证码、登录连接、退出连接等 -->
+                /login* = anon
+                /getVerify = anon
+                /logout = logout
+                /index* = authc
+                /menu/indexMenu = authc
+                /message/** = authc
+                <!-- 剩余其他路径，必须认证通过才可以访问 -->
+
+                /layout/** = perms["房型管理"]
+                /room/** = perms["房间管理"]
+                /move/** = perms["房间管理"]
+
+                /customer/** = perms["顾客管理"]
+                /move/** = perms["入住管理"]
+
+                /user/** = perms["用户管理"]
+
+                /role/** = perms["角色管理"]
+
+                /menu/** = perms["菜单管理"]
+
+
+                /** = authc
+            </value>
+        </property>
+    </bean>
+
+    <!-- 启动shiro注解 -->
+    <bean class="org.springframework.aop.framework.autoproxy.DefaultAdvisorAutoProxyCreator"
+          depends-on="lifecycleBeanPostProcessor">
+        <!-- 默认使用JDK代理 ，如被代理类没有实现接口，必须使用下列配置开启 cglib代理  -->
+        <property name="proxyTargetClass" value="true"/>
+    </bean>
+
+    <!-- 对安全管理器 增强代码 ， spring 后处理器 -->
+    <bean id="lifecycleBeanPostProcessor" class="org.apache.shiro.spring.LifecycleBeanPostProcessor"/>
+
+
+    <!-- shiro开启事务注解 -->
+    <bean class="org.apache.shiro.spring.security.interceptor.AuthorizationAttributeSourceAdvisor">
+        <property name="securityManager" ref="securityManager" />
+    </bean>
+
+    <!-- 配置shiro安全管理器 -->
+    <bean id="securityManager" class="org.apache.shiro.web.mgt.DefaultWebSecurityManager">
+        <property name="realms" ref="userRealm"/>
+    </bean>
+
+    <!-- 自定义Realm -->
+    <bean id="userRealm" class="com.fzb.hotel.realm.UserRealm"/>
+        <!--<property name="credentialsMatcher" ref="credentialsMatcher"/>-->
+
+    <!-- 配置凭证算法匹配器 -->
+    <bean id="credentialsMatcher" class="org.apache.shiro.authc.credential.HashedCredentialsMatcher">
+        <!-- Md5算法 -->
+        <property name="hashAlgorithmName" value="Md5"/>
+    </bean>
+
+</beans>

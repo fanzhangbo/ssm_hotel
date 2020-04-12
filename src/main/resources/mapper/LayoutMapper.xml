@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fzb.hotel.mapper.LayoutMapper">
+    <!--查询所有-->
+    <select id="listLayout" resultType="com.fzb.hotel.entity.Layout">
+        SELECT * FROM layout
+    </select>
+
+    <!--搜索房型searchLayout-->
+    <select id="searchLayout" parameterType="String" resultType="com.fzb.hotel.entity.Layout">
+        SELECT * FROM layout WHERE name LIKE CONCAT(CONCAT('%',#{name}),'%')
+    </select>
+
+    <!--根据房型id查询房型-->
+    <select id="getLayoutById" parameterType="Long" resultType="com.fzb.hotel.entity.Layout">
+        SELECT * FROM layout WHERE id=#{id}
+    </select>
+
+
+    <!--添加-->
+    <insert id="addLayout" parameterType="com.fzb.hotel.entity.Layout">
+        INSERT INTO layout(name,price,area) VALUES (#{name}, #{price}, #{area})
+    </insert>
+
+
+    <!--编辑-->
+    <update id="editLayout" parameterType="com.fzb.hotel.entity.Layout">
+        UPDATE layout
+        <set>
+            <if test="name != null">name=#{name},</if>
+            <if test="price != null">price=#{price},</if>
+            <if test="area != null">area=#{area}</if>
+        </set>
+        WHERE  id=#{id}
+    </update>
+
+    <delete id="deleteLayout" parameterType="Long">
+        DELETE FROM layout WHERE id=#{id}
+    </delete>
+</mapper>
+

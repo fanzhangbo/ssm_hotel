@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fzb.hotel.mapper.RoomMapper">
+    <!--查询所有-->
+    <select id="listRoom" resultType="com.fzb.hotel.entity.Room">
+        SELECT * FROM room ORDER BY room_no ASC
+    </select>
+
+    <!--根据房型id查询房型-->
+    <select id="getRoomById" parameterType="Long" resultType="com.fzb.hotel.entity.Room">
+        SELECT * FROM room WHERE id=#{id}
+    </select>
+
+    <!--搜索房间-->
+    <select id="searchRoom" parameterType="com.fzb.hotel.entity.Room" resultType="com.fzb.hotel.entity.Room">
+        SELECT * FROM room WHERE 1=1
+        <if test="roomNo != null">
+             AND room_no=#{roomNo}
+        </if>
+        <if test="status != null">
+            AND status=#{status}
+        </if>
+    </select>
+
+
+    <!--添加-->
+    <insert id="addRoom" parameterType="com.fzb.hotel.entity.Room">
+        INSERT INTO room(room_no,layout_id,status) VALUES (#{roomNo}, #{layoutId}, #{status})
+    </insert>
+
+
+    <!--编辑-->
+    <update id="editRoom" parameterType="com.fzb.hotel.entity.Room">
+        UPDATE room
+        <set>
+            <if test="roomNo != null">room_no=#{roomNo},</if>
+            <if test="layoutId != null">layout_id=#{layoutId},</if>
+            <if test="status != null">status=#{status}</if>
+        </set>
+        WHERE  id=#{id}
+    </update>
+
+    <delete id="deleteRoom" parameterType="Long">
+        DELETE FROM room WHERE id=#{id}
+    </delete>
+
+
+</mapper>
+

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fzb.hotel.mapper.RoleMapper">
+
+    <!--查询所有角色-->
+    <select id="listRole" resultType="com.fzb.hotel.entity.Role">
+        SELECT * FROM role
+    </select>
+
+    <!--根据角色id查询角色-->
+    <select id="getRoleById" parameterType="Long" resultType="com.fzb.hotel.entity.Role">
+        SELECT * FROM role WHERE id=#{id}
+    </select>
+
+
+    <!--根据用户id查询角色列表-->
+    <select id="getRoleListByUserId" parameterType="Long" resultType="com.fzb.hotel.entity.Role">
+        SELECT role.* FROM user_role,role
+        WHERE user_role.user_id=#{userId} AND user_role.role_id=role.id
+    </select>
+
+    <!--添加-->
+    <insert id="addRole" parameterType="com.fzb.hotel.entity.Role">
+        INSERT INTO role(role_name)
+        VALUES (#{roleName})
+    </insert>
+
+
+    <!--编辑-->
+    <update id="editRole" parameterType="com.fzb.hotel.entity.Role">
+        UPDATE role
+        <set>
+            <if test="roleName != null">role_name=#{roleName},</if>
+        </set>
+        WHERE  id=#{id}
+    </update>
+
+    <delete id="deleteRole" parameterType="Long">
+        DELETE FROM role WHERE id=#{id}
+    </delete>
+
+
+    <!--根据角色id删除该角色下跌 所有菜单-->
+    <delete id="deleteMenusByRoleId" parameterType="Long">
+        DELETE FROM role_menu WHERE role_id=#{roleId}
+    </delete>
+
+    <insert id="addRoleMenus">
+        INSERT INTO role_menu(role_id,menu_id) VALUES (#{roleId},#{menuId})
+    </insert>
+
+
+
+</mapper>
+

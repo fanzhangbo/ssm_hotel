@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fzb.hotel.mapper.MoveMapper">
+    <!--查询所有-->
+    <select id="listMove" resultType="com.fzb.hotel.entity.Move">
+        SELECT move.*,customer.username AS customerName,room.room_no AS roomNo from move
+        LEFT JOIN customer on move.customer_id=customer.id
+        LEFT JOIN room ON move.room_id=room.id
+        ORDER BY move.create_time DESC
+    </select>
+
+
+    <select id="getMoveById" parameterType="Long" resultType="com.fzb.hotel.entity.Move">
+        SELECT * FROM move WHERE id=#{id}
+    </select>
+
+    <insert id="addMove" parameterType="com.fzb.hotel.entity.Move">
+        INSERT INTO move (customer_id,room_id,move_time,expire_time,create_time,total_price)
+        VALUES (#{customerId},#{roomId},#{moveTime},#{expireTime},#{createTime},#{totalPrice})
+    </insert>
+
+    <!--编辑-->
+    <update id="editMove" parameterType="com.fzb.hotel.entity.Move">
+        UPDATE move
+        <set>
+            <if test="customerId != null">customer_id=#{customerId},</if>
+            <if test="roomId != null">room_id=#{roomId},</if>
+            <if test="moveTime != null">move_time=#{moveTime},</if>
+            <if test="expireTime != null">expire_time=#{expireTime},</if>
+            <if test="totalPrice != null">total_price=#{totalPrice}</if>
+        </set>
+        WHERE  id=#{id}
+    </update>
+
+
+</mapper>
+

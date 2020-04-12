@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.fzb.hotel.mapper.MessageMapper">
+
+    <!--根据信息id查询信息-->
+    <select id="getMessageById" parameterType="Long" resultType="com.fzb.hotel.entity.Message">
+        SELECT * FROM message WHERE id=#{id}
+    </select>
+
+
+    <!--根据发送用户id查询消息列表-->
+    <select id="getMessageListBySendId" parameterType="Long" resultType="com.fzb.hotel.entity.Message">
+        SELECT * FROM message WHERE send_id=#{sendId} ORDER BY read_flag ASC,create_time DESC
+    </select>
+
+    <!--根据目标用户id查询消息列表-->
+    <select id="getMessageListByTargetId" parameterType="Long" resultType="com.fzb.hotel.entity.Message">
+        SELECT * FROM message WHERE target_id=#{targetId} ORDER BY read_flag ASC,create_time DESC
+    </select>
+
+    <!--根据条件查询消息列表-->
+    <select id="getMessageByMap" parameterType="com.fzb.hotel.entity.Message" resultType="com.fzb.hotel.entity.Message">
+        SELECT * FROM message WHERE 1=1
+        <if test="targetId != null">
+            AND target_id=#{targetId}
+        </if>
+        <if test="sendId != null">
+            AND send_id=#{sendId}
+        </if>
+        <if test="rank != null">
+            AND rank=#{rank}
+        </if>
+        <if test="readFlag != null">
+            AND read_flag=#{readFlag}
+        </if>
+        <if test="id != null">
+            AND id=#{id}
+        </if>
+        ORDER BY read_flag ASC,create_time DESC
+    </select>
+
+    <!--根据targetId获取未读消息数-->
+    <select id="getUnreadMsgNum" parameterType="Long" resultType="Integer">
+        SELECT COUNT(id) FROM message WHERE target_id=#{targetId} AND read_flag=1
+    </select>
+
+    <!--添加-->
+    <insert id="addMessage" parameterType="com.fzb.hotel.entity.Message">
+        INSERT INTO message(send_id,target_id,rank,read_flag,content,create_time,edit_time)
+        VALUES (#{sendId},#{targetId},#{rank},#{readFlag},#{content},#{createTime},#{editTime})
+    </insert>
+
+
+    <!--编辑-->
+    <update id="editMessage" parameterType="com.fzb.hotel.entity.Message">
+        UPDATE message
+        <set>
+            <if test="targetId != null">target_id=#{targetId},</if>
+            <if test="rank != null">rank=#{rank},</if>
+            <if test="readFlag != null">read_flag=#{readFlag},</if>
+            <if test="content != null">content=#{content}</if>
+        </set>
+        WHERE id=#{id}
+    </update>
+
+    <delete id="deleteMessage" parameterType="Long">
+        DELETE FROM message WHERE id=#{id}
+    </delete>
+
+</mapper>
+
